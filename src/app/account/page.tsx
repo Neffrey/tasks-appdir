@@ -34,7 +34,7 @@ const Account = () => {
     <>
       <Head>
         <title>{headTitle}</title>
-        <meta name="description" content="View & Edit Account Details" />
+        <meta name="description" content="View & Edit Account Details!" />
         <link rel="icon" href="/CircleLogoIco.ico" />
       </Head>
 
