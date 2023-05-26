@@ -13,35 +13,37 @@ import { prisma } from "~/server/db";
 import { addTaskSchema } from "~/components/forms/addTaskForm";
 import { nameChangeSchema } from "~/components/forms/nameChangeFormModal";
 
+// ROLES
 const UserRoles = ["USER", "ADMIN"];
 
 // AUTH MIDDLEWARE
 const userAuth = async () => {
   const session = await getServerSession(authOptions);
-  if (session?.user?.role && UserRoles.includes(session?.user?.role)) {
-    return session.user;
+  if (
+    session &&
+    session?.user?.role &&
+    UserRoles.includes(session?.user?.role)
+  ) {
+    return session;
   }
-  // if (!session) {
   throw new Error("Unauthorized - Must be a user to access");
-  // return null;
-  // }
 };
 
 // USER ROUTES
 export const getMyUser = zact()(async () => {
-  const user = await userAuth();
-  if (user?.id) {
+  const authed = await userAuth();
+  if (authed) {
     return prisma.user.findUnique({
-      where: { id: user.id },
+      where: { id: authed.user.id },
     });
   }
 });
 
 export const changeName = zact(z.object(nameChangeSchema))(async (input) => {
-  const user = await userAuth();
-  if (user?.id) {
+  const authed = await userAuth();
+  if (authed) {
     return prisma.user.update({
-      where: { id: user.id },
+      where: { id: authed.user.id },
       data: {
         name: input.name,
       },
@@ -55,8 +57,8 @@ export const getOneTask = zact(
     taskId: z.string(),
   })
 )(async (input) => {
-  const user = await userAuth();
-  if (user?.id) {
+  const authed = await userAuth();
+  if (authed) {
     return prisma.task.findFirst({
       where: { id: input.taskId },
     });
@@ -65,8 +67,8 @@ export const getOneTask = zact(
 
 export const getMyTasks = zact(z.object({ userId: z.string() }))(
   async (input) => {
-    const user = await userAuth();
-    if (user?.id) {
+    const authed = await userAuth();
+    if (authed) {
       return prisma.task.findMany({
         where: { ownerId: input.userId },
       });
@@ -75,11 +77,11 @@ export const getMyTasks = zact(z.object({ userId: z.string() }))(
 );
 
 export const createTask = zact(z.object(addTaskSchema))(async (input) => {
-  const user = await userAuth();
-  if (user?.id) {
+  const authed = await userAuth();
+  if (authed) {
     return prisma.task.create({
       data: {
-        ownerId: user.id,
+        ownerId: authed.user.id,
         title: input.title,
         timeframe: input.timeframe,
         timesToComplete: input.timesToComplete,
@@ -90,11 +92,11 @@ export const createTask = zact(z.object(addTaskSchema))(async (input) => {
 });
 
 export const updateTask = zact(z.object(addTaskSchema))(async (input) => {
-  const user = await userAuth();
-  if (user?.id) {
+  const authed = await userAuth();
+  if (authed) {
     return prisma.task.create({
       data: {
-        ownerId: user.id,
+        ownerId: authed.user.id,
         title: input.title,
         timeframe: input.timeframe,
         timesToComplete: input.timesToComplete,
@@ -105,10 +107,10 @@ export const updateTask = zact(z.object(addTaskSchema))(async (input) => {
 });
 
 export const deleteTask = zact(z.object(addTaskSchema))(async (input) => {
-  const user = await userAuth();
-  if (user?.id) {
+  const authed = await userAuth();
+  if (authed) {
     return prisma.task.delete({
-      where: { id: user.id },
+      where: { id: authed.user.id },
     });
   }
 });

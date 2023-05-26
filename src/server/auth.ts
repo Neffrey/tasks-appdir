@@ -5,6 +5,7 @@ import {
   type DefaultUser,
   getServerSession,
 } from "next-auth";
+import { type Role } from "@prisma/client";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { env } from "~/env.mjs";
@@ -25,7 +26,7 @@ declare module "next-auth" {
   }
 
   interface User extends DefaultUser {
-    role?: string | null;
+    role?: Role | null;
   }
 }
 
