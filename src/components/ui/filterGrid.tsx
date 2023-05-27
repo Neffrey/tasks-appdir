@@ -3,9 +3,10 @@ import { nanoid } from "nanoid";
 // import { FaPenSquare, FaWindowClose } from "react-icons/fa";
 
 // TYPES
+type ZactFunction<T> = (arg: T) => Promise<T>;
 type FilterGridProps<T> = {
   dataTitlePlural: string;
-  data: T[];
+  data: T[] | null | undefined;
   refreshData: () => void;
   updateData: (updateArg: T) => void;
   deleteData: (deleteArg: T) => void;
@@ -72,13 +73,13 @@ const FilterGrid = <T,>({
     return (
       <div className="text-lg text-base-content">{`No ${dataTitlePlural} Found :'(`}</div>
     );
-    return (
-      <div className={`grid grid-cols-${gridCols} items-center gap-4`}>
-        {data?.map((row) => {
-          return <p key={nanoid()}>TEST ROW</p>;
-        })}
-      </div>
-    );
+  return (
+    <div className={`grid grid-cols-${gridCols} items-center gap-4`}>
+      {data?.map((row) => {
+        return <p key={nanoid()}>TEST ROW</p>;
+      })}
+    </div>
+  );
 };
 
 export default FilterGrid;

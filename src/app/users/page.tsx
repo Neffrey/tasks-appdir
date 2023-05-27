@@ -1,3 +1,5 @@
+"use client";
+
 // LIBRARIES
 import Head from "next/head";
 

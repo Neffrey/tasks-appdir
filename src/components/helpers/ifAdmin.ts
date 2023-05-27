@@ -1,4 +1,4 @@
-"use Client"
+"use client"
 
 // LIBRARIES
 import { useSession } from "next-auth/react";

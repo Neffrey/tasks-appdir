@@ -37,10 +37,10 @@ export const getAllUsers = zact()(async (input) => {
 export const updateUser = zact(
   z.object({
     id: z.string(),
-    name: z.string().optional(),
-    email: z.string().optional(),
-    image: z.string().optional(),
-    role: z.enum(["ADMIN", "USER", "RESTRICTED"]).optional(),
+    name: z.string().nullish(),
+    email: z.string().nullish(),
+    image: z.string().nullish(),
+    role: z.enum(["ADMIN", "USER", "RESTRICTED"]).nullish(),
   })
 )(async (input) => {
   const authed = await adminAuth();
@@ -51,7 +51,7 @@ export const updateUser = zact(
         name: input.name,
         email: input.email,
         image: input.image,
-        role: input.role,
+        role: input?.role ? input.role : undefined,
       },
     });
   }
@@ -69,4 +69,3 @@ export const deleteUser = zact(
     });
   }
 });
-

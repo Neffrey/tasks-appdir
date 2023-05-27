@@ -1,12 +1,14 @@
 "use client";
 
 // LIBRARIES
-import type { User } from "next-auth";
+import { type User } from "next-auth";
+import { useZact } from "zact/client";
 
 // SERVER ACTIONS
 import { getAllUsers, deleteUser, updateUser } from "~/actions/adminActions";
 
 // COMPONENTS
+import { PartialTypeExcept } from "~/components/helpers/partialTypeExcept";
 import FilterGrid from "~/components/ui/filterGrid";
 
 // TABLE HEAD
@@ -39,6 +41,16 @@ const UsersAdminAuthed = () => {
   // const updateUser = api.admin.updateUser.useMutation();
   // const deleteUser = api.admin.deleteUser.useMutation();
 
+  // SERVER ACTIONS HELPERS
+  const getAllUsersZact = useZact(getAllUsers);
+  const updateUserZact = useZact(updateUser);
+  const deleteUserZact = useZact(deleteUser);
+
+  // FORM HELPERS
+  const refreshData = () => getAllUsersZact.mutate({});
+  const updateData = (user: User) => updateUserZact.mutate(user);
+  const deleteData = (user: User) => deleteUserZact.mutate(user);
+
   // RETURN
   return (
     <div className="flex min-h-screen w-full flex-col items-center p-8 text-xl ">
@@ -47,13 +59,13 @@ const UsersAdminAuthed = () => {
       <button
         className="button btn-primary max-w-sm rounded-lg p-6"
         onClick={() =>
-          console.log("type of fetchAllUsers: ", fetchAllUsers.data)
+          console.log("getAllUsersZact Data: ", getAllUsersZact.data)
         }
       >
-        Log fetchAllUsers
+        Log getAllUsersZact Data
       </button>
       <div className="p-2" />
-      <button
+      {/* <button
         className="button btn-secondary max-w-sm rounded-lg p-6"
         onClick={() => console.log("type of updateUser: ", updateUser)}
       >
@@ -65,13 +77,14 @@ const UsersAdminAuthed = () => {
         onClick={() => console.log("type of deleteUser: ", deleteUser)}
       >
         Log deleteUser
-      </button>
+      </button> */}
       <FilterGrid
-        dataTitle="Users"
+        data={getAllUsersZact.data}
+        dataTitlePlural="Users"
         columns={columns}
-        fetchQuery={fetchAllUsers}
-        updateMutation={updateUser}
-        deleteMutation={deleteUser}
+        refreshData={refreshData}
+        updateData={updateData}
+        deleteData={deleteData}
       />
     </div>
   );
